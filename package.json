@@ -1,0 +1,14 @@
+{
+  "name": "md-renderer",
+  "version": "1.0.0",
+  "description": "Markdown + LaTeX renderer with live preview and PDF export (multi-page & single-page)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "puppeteer": "^24.0.0"
+  }
+}
