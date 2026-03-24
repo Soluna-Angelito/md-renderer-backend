@@ -58,7 +58,7 @@ Double-click **`start.bat`** — it checks for Node.js, runs `npm install` on fi
 
 ```bash
 # Clone the repository
-git clone https://github.com/mmx1517/md-renderer-backend.git
+git clone https://github.com/Soluna-Angelito/md-renderer-backend.git
 cd md-renderer-backend
 
 # Install dependencies
