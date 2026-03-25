@@ -39,6 +39,7 @@
 
   let currentFilePath = null;
   let currentFileBaseDir = null;
+  let isFileDialogOpen = false;
 
   // ─── Marked.js Configuration ───
   const renderer = new marked.Renderer();
@@ -665,6 +666,8 @@
   });
 
   async function openMarkdownFile() {
+    if (isFileDialogOpen) return;
+    isFileDialogOpen = true;
     try {
       const response = await fetch('/api/open-markdown', { method: 'POST' });
       if (!response.ok) {
@@ -695,6 +698,8 @@
       } else {
         showToast('Open file failed: ' + err.message, 'error');
       }
+    } finally {
+      isFileDialogOpen = false;
     }
   }
 
@@ -729,6 +734,8 @@
   }
 
   async function saveFileAs() {
+    if (isFileDialogOpen) return;
+    isFileDialogOpen = true;
     try {
       const defaultName = currentFilePath ? getBaseName(currentFilePath) : 'document.md';
       const response = await fetch('/api/save-markdown-as', {
@@ -758,6 +765,8 @@
       } else {
         showToast('Save As failed: ' + err.message, 'error');
       }
+    } finally {
+      isFileDialogOpen = false;
     }
   }
 
