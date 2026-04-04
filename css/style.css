@@ -488,7 +488,8 @@ html, body {
   margin: 0;
   padding: 20px 24px;
   border: none;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   font-family: var(--font-mono);
   font-size: 14px;
   line-height: 1.7;
@@ -501,12 +502,16 @@ html, body {
 }
 
 /* ===== Editor Syntax Highlight ===== */
-.md-hl-heading-marker { color: var(--hl-heading); font-weight: 700; }
-.md-hl-heading { color: var(--hl-heading); font-weight: 700; }
-.md-hl-bold { font-weight: 700; }
-.md-hl-bold-italic { font-weight: 700; font-style: italic; }
+/* font-weight/font-style are intentionally omitted from all highlight spans
+   to prevent line-metric mismatches with CJK fallback fonts (which would
+   desync the highlight <pre> from the transparent <textarea>). */
+.editor-highlight span { font-weight: inherit; font-style: inherit; }
+.md-hl-heading-marker { color: var(--hl-heading); }
+.md-hl-heading { color: var(--hl-heading); }
+.md-hl-bold { color: var(--hl-bold); }
+.md-hl-bold-italic { color: var(--hl-bold); }
 .md-hl-bold-punct { color: var(--hl-punct); }
-.md-hl-italic { font-style: italic; }
+.md-hl-italic { color: var(--hl-italic); }
 .md-hl-italic-punct { color: var(--hl-punct); }
 .md-hl-strike { color: var(--hl-strike); text-decoration: line-through; }
 .md-hl-strike-punct { color: var(--hl-punct); }
@@ -517,8 +522,8 @@ html, body {
 .md-hl-link-text { color: var(--hl-link-text); text-decoration: underline; }
 .md-hl-link-url { color: var(--hl-link-url); }
 .md-hl-link-punct { color: var(--hl-punct); }
-.md-hl-list-marker { color: var(--hl-list-marker); font-weight: 700; }
-.md-hl-quote-marker { color: var(--hl-quote-marker); font-weight: 700; }
+.md-hl-list-marker { color: var(--hl-list-marker); }
+.md-hl-quote-marker { color: var(--hl-quote-marker); }
 .md-hl-hr { color: var(--hl-hr); }
 .md-hl-math { color: var(--hl-math); }
 .md-hl-math-delim { color: var(--hl-math-delim); }
