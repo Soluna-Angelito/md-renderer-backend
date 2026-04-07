@@ -86,6 +86,25 @@
     return '<span class="' + cls + '">' + content + '</span>';
   }
 
+  function hlMathContent(text) {
+    if (!text) return '';
+    let result = '';
+    let i = 0;
+    const n = text.length;
+    while (i < n) {
+      if (text[i] === '\\' && i + 1 < n && /[a-zA-Z]/.test(text[i + 1])) {
+        let end = i + 1;
+        while (end < n && /[a-zA-Z]/.test(text[end])) end++;
+        result += hlSpan('md-hl-math', escapeHtml(text.substring(i, end)));
+        i = end;
+      } else {
+        result += escapeHtml(text[i]);
+        i++;
+      }
+    }
+    return result;
+  }
+
   function highlightMarkdown(text) {
     if (!text) return '\n';
     const lines = text.split('\n');
@@ -123,7 +142,7 @@
         out.push(hlSpan('md-hl-math-delim', escapeHtml(raw)));
         continue;
       }
-      if (inMathBlock) { out.push(hlSpan('md-hl-math', escapeHtml(raw))); continue; }
+      if (inMathBlock) { out.push(hlMathContent(raw)); continue; }
 
       const hm = raw.match(/^(#{1,6}\s)(.*)/);
       if (hm) {
@@ -181,7 +200,7 @@
           const end = text.indexOf('\\)', i + 2);
           if (end !== -1) {
             result += hlSpan('md-hl-math-delim', escapeHtml('\\('))
-                    + hlSpan('md-hl-math', escapeHtml(text.substring(i + 2, end)))
+                    + hlMathContent(text.substring(i + 2, end))
                     + hlSpan('md-hl-math-delim', escapeHtml('\\)'));
             i = end + 2; continue;
           }
@@ -196,7 +215,7 @@
         const end = text.indexOf('$$', i + 2);
         if (end !== -1) {
           result += hlSpan('md-hl-math-delim', '$$')
-                  + hlSpan('md-hl-math', escapeHtml(text.substring(i + 2, end)))
+                  + hlMathContent(text.substring(i + 2, end))
                   + hlSpan('md-hl-math-delim', '$$');
           i = end + 2; continue;
         }
@@ -206,7 +225,7 @@
         const end = text.indexOf('$', i + 1);
         if (end !== -1 && end > i + 1) {
           result += hlSpan('md-hl-math-delim', '$')
-                  + hlSpan('md-hl-math', escapeHtml(text.substring(i + 1, end)))
+                  + hlMathContent(text.substring(i + 1, end))
                   + hlSpan('md-hl-math-delim', '$');
           i = end + 1; continue;
         }
@@ -420,7 +439,9 @@
     if (!html || !inlines.length) return html;
     return inlines.reduce((result, expr, idx) => {
       const token = `${LATEX_TOKENS.INLINE_BLOCK_PREFIX}${idx}${LATEX_TOKENS.INLINE_BLOCK_SUFFIX}`;
-      return result.replace(new RegExp(escapeRegex(token), 'g'), expr);
+      const content = expr.slice(2, -2);
+      const escaped = `\\(${escapeHtml(content)}\\)`;
+      return result.replace(new RegExp(escapeRegex(token), 'g'), escaped);
     }, html);
   }
 
@@ -430,9 +451,10 @@
     return blocks.reduce((result, block, idx) => {
       const token = `${LATEX_TOKENS.DISPLAY_BLOCK_PREFIX}${idx}${LATEX_TOKENS.DISPLAY_BLOCK_SUFFIX}`;
       const trimmed = block.content.trim();
+      const safeContent = escapeHtml(trimmed);
       const restored = block.delimiter === '\\['
-        ? `\\[\n${trimmed}\n\\]`
-        : `$$\n${trimmed}\n$$`;
+        ? `\\[\n${safeContent}\n\\]`
+        : `$$\n${safeContent}\n$$`;
       return result.replace(new RegExp(escapeRegex(token), 'g'), restored);
     }, html);
   }
